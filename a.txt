@@ -1,0 +1,6 @@
+app.js new
+App.js
+components
+export host="https://22990a8e266148a38e780e0b2549f228.vfs.cloud9.us-east-1.amazonaws.com"
+export clientPORT="8080"
+export serverPORT="8081"
