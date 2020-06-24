@@ -8,7 +8,7 @@ import User from './components/User';
 import Error from './components/Error';
 import socketIOClient from "socket.io-client";
 class App extends Component{
-  socket = socketIOClient("https://22990a8e266148a38e780e0b2549f228.vfs.cloud9.us-east-1.amazonaws.com:8082");
+  socket = socketIOClient("http://:3002");
   constructor(props){
     super(props);
     this.state={
@@ -16,7 +16,7 @@ class App extends Component{
       isLoggedIn:false,
       loading:true,
       newsChain:[],
-      url:"https://22990a8e266148a38e780e0b2549f228.vfs.cloud9.us-east-1.amazonaws.com:8081"
+      url:"http://:3001"
     };
     this.LogIn=this.LogIn.bind(this);
     this.LogOut=this.LogOut.bind(this);

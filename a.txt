@@ -1,7 +1,11 @@
-1+1+1
+1
 home
 filter
 test
+session
+oneIP
+elb
+forever
 
 
 newML
@@ -49,4 +53,4 @@ python -m pip install joblib
 python -m pip install nltk
 sudo service mongod start
 npm start
-paste http://IPaddressofEC2 in front 2at package.json and 2 at App.js
+paste IPaddressofEC2 in front 1at package.json and 2 at App.js
