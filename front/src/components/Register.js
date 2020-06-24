@@ -6,11 +6,11 @@ class Register extends Component{
         <div>
           <Link to="/" className="btn btn-lg btn-warning basicButtons">Home</Link>
           <form onSubmit={(event) => {
-            event.preventDefault()
-            const name=this.name.value
-            const username = this.username.value
-            const password=this.password.value
-            this.props.Register(name,username,password)
+            event.preventDefault();
+            const name=this.name.value;
+            const username = this.username.value;
+            const password=this.password.value;
+            this.props.Register(name,username,password);
           }}
             className="text-center border border-light p-5"
             style={{width:'40%'}}
@@ -35,9 +35,9 @@ class Register extends Component{
                 placeholder="Password"
                 required />
               <input type="button" value="Check Username" className="btn btn-info my-4 btn-block" onClick={(event)=>{
-                event.preventDefault()
-                const username = this.username.value
-                this.props.checkUsername(username)
+                event.preventDefault();
+                const username = this.username.value;
+                this.props.checkUsername(username);
               }}/>
             <button type="submit" className="btn btn-info my-4 btn-block">Register</button>
           </form>

@@ -6,10 +6,10 @@ class Login extends Component{
         <div>
           <Link to="/" className="btn btn-lg btn-warning basicButtons">Home</Link>
           <form onSubmit={(event) => {
-            event.preventDefault()
-            const username = this.username.value
-            const password=this.password.value
-            this.props.LogIn(username,password)
+            event.preventDefault();
+            const username = this.username.value;
+            const password=this.password.value;
+            this.props.LogIn(username,password);
           }}
             className="text-center border border-light p-5"
             style={{width:'40%'}}

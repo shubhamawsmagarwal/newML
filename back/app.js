@@ -34,6 +34,7 @@ app.use(function(req,res,next){
    next();
 });
 app.use(expressSanitizer());
+var io=require('socket.io').listen(process.env.websocketPORT);
 
 /****** Importing dataStructure   ******/
 const NewsChain=require('./models/newsChain');
@@ -42,9 +43,9 @@ const newsChainInstance=new NewsChain();
 /********** get routes  *********/
 app.get("/",function(req,res){
     if(req.isAuthenticated())
-       res.json({isLoggedIn:true,user:req.user,newsChain:newsChainInstance.chain});
+       res.json({isLoggedIn:true,user:req.user});
     else
-       res.json({isLoggedIn:false,user:null,newsChain:newsChainInstance.chain});
+       res.json({isLoggedIn:false,user:null});
 });
 app.get("/home",function(req,res){
     if(req.isAuthenticated())
@@ -94,34 +95,6 @@ app.post("/check",function(req,res){
         }
     });
 });
-app.post("/contribute",function(req,res){
-    if(!req.isAuthenticated())
-       res.json({data:"LoginFirst"});
-    const title= req.sanitize(req.body.title);
-    const description=req.sanitize(req.body.description);
-    const articleInstance=title+" "+description;
-    const category=getCategory(articleInstance);
-    var newArticle=new article({
-    title:title,
-    description:description,
-    category:category,
-    author:req.user.name,
-    authorUsername:req.user.username
-    });
-    newsChainInstance.createNewArticle(req.user.name,req.user.username,title,description,category);
-    newArticle.save(function(err,art){
-        if(err){
-            console.log(err);
-            res.redirect("/");
-        }
-        else{
-            req.user.articles.unshift(art);
-            req.user.save();
-            res.redirect("/");
-        }
-    });
-});
-
 
 
 
@@ -134,7 +107,42 @@ function getCategory(article){
 }
 
 
+
 /******** Listening *************/
 app.listen(process.env.serverPORT,process.env.IP,function(res,req){
     console.log("Server is running");
+});
+
+
+
+/*********** Websocket connection ****************/
+var connections=[]
+io.sockets.on('connection',function(socket){
+   connections.push(socket);
+   console.log("Connected : %s sockets connected",connections.length);
+   //disconnect
+   socket.on("disconnect",function(data){
+        connections.splice(connections.indexOf(socket),1);
+        console.log("Disconnected : %s sockets connected",connections.length);
+   });
+   //send message
+   socket.on("send message",function(data){
+        const title= data.title;
+        const description=data.description;
+        const category=getCategory(title+" "+description);
+        newsChainInstance.createNewArticle(data.name,data.username,title,description,category);
+        var articleInstance={title:title,description:description,category:category,author:data.name,authorUsername:data.username};
+        var newArticle=new article(articleInstance);
+        newArticle.save(function(err,art){
+            if(err)
+                console.log(err);
+            else{
+                user.find({username:data.username},function(err,result){
+                   result.articles.unshift(art);
+                   result.save();
+                   io.sockets.emit('new message',{msg:articleInstance});
+                });
+            }
+        });
+   });
 });

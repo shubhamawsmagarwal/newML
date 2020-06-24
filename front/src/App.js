@@ -6,7 +6,9 @@ import Login from './components/Login';
 import Register from './components/Register';
 import User from './components/User';
 import Error from './components/Error';
+import socketIOClient from "socket.io-client";
 class App extends Component{
+  socket = socketIOClient("https://22990a8e266148a38e780e0b2549f228.vfs.cloud9.us-east-1.amazonaws.com:8082");
   constructor(props){
     super(props);
     this.state={
@@ -14,8 +16,8 @@ class App extends Component{
       isLoggedIn:false,
       loading:true,
       newsChain:[],
-      url:"https://22990a8e266148a38e780e0b2549f228.vfs.cloud9.us-east-1.amazonaws.com:8081",
-    }
+      url:"https://22990a8e266148a38e780e0b2549f228.vfs.cloud9.us-east-1.amazonaws.com:8081"
+    };
     this.LogIn=this.LogIn.bind(this);
     this.LogOut=this.LogOut.bind(this);
     this.Register=this.Register.bind(this);
@@ -23,10 +25,15 @@ class App extends Component{
     this.Contribute=this.Contribute.bind(this);
   }
   async componentWillMount(){
-  await axios.get(this.state.url+"/home",{withCredentials: true})
-    .then(res => {this.setState({ isLoggedIn: res.data.isLoggedIn,user: res.data.user,newsChain:res.data.newsChain,loading:false })})
-    .catch(err=>{console.log(err)});
-    this.setState({loading:false});
+    this.socket.on("new message",function(msg){
+      const newUser=this.state.user;
+      if(newUser.username===msg.msg.authorUsername)
+        newUser.articles.push(msg.msg);
+      this.setState({newsChain:[...this.state.newsChain,msg.msg],user:newUser});
+    });
+    await axios.get(this.state.url+"/home",{withCredentials: true})
+      .then(res => {this.setState({ isLoggedIn: res.data.isLoggedIn,user: res.data.user,newsChain:res.data.newsChain,loading:false })})
+      .catch(err=>{console.log(err)});
   }
   async LogIn(username,password){
      await axios.post(this.state.url+"/login",{username: username,password: password},{withCredentials: true})
@@ -54,10 +61,8 @@ class App extends Component{
      })
      .catch(err=>{console.log(err)});
   }
-  async Contribute(title,description){
-     await axios.post(this.state.url+"/contribute",{title: title,description: description},{withCredentials: true})
-     .then(res => {this.setState({ isLoggedIn: res.data.isLoggedIn,user: res.data.user,newsChain:res.data.newsChain})})
-     .catch(err=>{console.log(err)});
+  async Contribute(title,description,name,username){
+     await this.socket.emit('send message',{title:title,description:description,name:name,username:username});
   }
   
   render(){
@@ -66,27 +71,24 @@ class App extends Component{
       {!this.state.loading
       ?<Switch>
         <Route exact path="/" render={(props)=><Home {...props} 
-        isLoggedIn={this.state.isLoggedIn} newsChain={this.state.newsChain} logOut={this.LogOut}
-        username={!this.state.isLoggedIn
-                  ?null
-                  :this.state.user.username}
+        isLoggedIn={this.state.isLoggedIn} newsChain={this.state.newsChain} LogOut={this.LogOut} username={!this.state.isLoggedIn?null:this.state.user.username}
         />}></Route>
         <Route exact path="/login"
         render={!this.state.isLoggedIn
         ?(props)=><Login {...props} LogIn={this.LogIn}/>
-        :(props)=><User {...props} LogOut={this.LogOut} username={this.state.user.username} Contribute={this.Contribute} articles={this.state.user.articles}/> 
+        :(props)=><User {...props} LogOut={this.LogOut} username={this.state.user.username} name={this.state.user.name} Contribute={this.Contribute} articles={this.state.user.articles}/> 
         }
         ></Route>
         <Route exact path="/register"
         render={!this.state.isLoggedIn
         ?(props)=><Register {...props} Register={this.Register} checkUsername={this.checkUsername}/>
-        :(props)=><User {...props} LogOut={this.LogOut} username={this.state.user.username} Contribute={this.Contribute} articles={this.state.user.articles}/> 
+        :(props)=><User {...props} LogOut={this.LogOut} username={this.state.user.username} name={this.state.user.name} Contribute={this.Contribute} articles={this.state.user.articles}/> 
         }
         ></Route>
         <Route exact path="/user"
         render={!this.state.isLoggedIn
         ?(props)=><Login {...props} LogIn={this.LogIn}/>
-        :(props)=><User {...props} LogOut={this.LogOut} username={this.state.user.username} Contribute={this.Contribute} articles={this.state.user.articles}/> 
+        :(props)=><User {...props} LogOut={this.LogOut} username={this.state.user.username} name={this.state.user.name} Contribute={this.Contribute} articles={this.state.user.articles}/> 
         }
         ></Route>
         <Route component={Error}></Route>

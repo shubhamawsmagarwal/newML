@@ -4,16 +4,16 @@ class User extends Component{
   render(){
     return(<div>
         <button className="btn btn-lg btn-success basicButtons" onClick={(event)=>{
-          event.preventDefault()
-          this.props.LogOut()
+          event.preventDefault();
+          this.props.LogOut();
         }}>Logout</button>
-        <button className="btn btn-lg text-info basicButtons ">{this.props.username}</button>
+        <button className="btn btn-lg text-info basicButtons ">jjkj</button>
         <Link to="/" className="btn btn-lg btn-warning basicButtons">Home</Link>
         <form onSubmit={(event) => {
-            event.preventDefault()
-            const title = this.title.value
-            const description=this.description.value
-            this.props.Contribute(title,description)
+            event.preventDefault();
+            const title = this.title.value;
+            const description=this.description.value;
+            this.props.Contribute(title,description,this.props.name,this.props.username);
           }}
             className="text-center border border-light p-3"
             style={{width:'30%'}}

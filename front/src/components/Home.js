@@ -23,8 +23,7 @@ class Home extends Component{
                <div className="text-center  text-primary font-weight-bold">{article.title}</div>
                <div className="text-center p-3">{article.description}</div>
                <div className="text-center"><button className="btn btn-secondary">{article.category}</button></div>
-               <div className="text-right text-success">Authors:-{article.author}</div>
-               <div className="text-right text-success">Authors:-{article.authorUsername}</div>
+               <div className="text-right text-success">Authors:-{"  "+article.author+"  "} By:-{"  "+article.authorUsername+"  "}</div>
             </div>
             ))}
           </div>
