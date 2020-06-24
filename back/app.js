@@ -137,7 +137,7 @@ io.sockets.on('connection',function(socket){
             if(err)
                 console.log(err);
             else{
-                user.find({username:data.username},function(err,result){
+                user.findOne({username:data.username},function(err,result){
                    result.articles.unshift(art);
                    result.save();
                    io.sockets.emit('new message',{msg:articleInstance});

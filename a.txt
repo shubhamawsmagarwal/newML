@@ -1,11 +1,12 @@
-check send message in app.js
-this.state.url+"/check",null,{body:{username:username},withCredentials: true})
-
+1+1+1
+home
+filter
+test
 
 
 newML
 http anywhere due to proxy and tcp 3001 can be only single ip
-MyMERNINTRO ssh http tcp 3000,tcp 3001,tcp 3002 all anywhere
+myNewML ssh http tcp 3000,tcp 3001,tcp 3002 all anywhere
 cd SSH
 chmod 400 MyEC2KeyPair.pem
 ssh ec2-user@ -i MyEC2KeyPair.pem

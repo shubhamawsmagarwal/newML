@@ -7,7 +7,7 @@ class User extends Component{
           event.preventDefault();
           this.props.LogOut();
         }}>Logout</button>
-        <button className="btn btn-lg text-info basicButtons ">jjkj</button>
+        <button className="btn btn-lg text-info basicButtons ">{this.props.username}</button>
         <Link to="/" className="btn btn-lg btn-warning basicButtons">Home</Link>
         <form onSubmit={(event) => {
             event.preventDefault();
