@@ -28,8 +28,8 @@ class App extends Component{
     this.socket.on("new message",function(msg){
       const newUser=this.state.user;
       if(newUser!==null && newUser.username===msg.msg.authorUsername)
-        newUser.articles.push(msg.msg);
-      this.setState({newsChain:[...this.state.newsChain,msg.msg],user:newUser});
+        newUser.articles.unshift(msg.msg);
+      this.setState({newsChain:[msg.msg,...this.state.newsChain],user:newUser});
     }.bind(this));
     await axios.get(this.state.url+"/home",{withCredentials: true})
       .then(res => {this.setState({ isLoggedIn: res.data.isLoggedIn,user: res.data.user,newsChain:res.data.newsChain,loading:false })})
